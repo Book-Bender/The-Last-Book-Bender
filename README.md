@@ -15,7 +15,7 @@ git clone https://github.com/Book-Bender/The-Last-Book-Bender.git
 2. Initialize dependencies, raw data by running:
 
 ```bash
-sh init.sh
+sh InitScript/init.sh
 ```
 
 note that this will involve installing `torch` (you can modify it in the dependency file).
