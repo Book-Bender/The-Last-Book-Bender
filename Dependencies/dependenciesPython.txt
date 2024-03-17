@@ -1,0 +1,10 @@
+transformers == 4.38.2
+notebook
+pandas
+numpy
+scipy
+wheel == 0.43.0
+surprise
+torch == 2.2.1
+ipywidgets
+
