@@ -15,18 +15,17 @@ git clone https://github.com/Book-Bender/The-Last-Book-Bender.git
 2. Initialize dependencies, raw data by running:
 
 ```bash
-sh InitScript/init.sh
+sh InitScripts/init.sh
 ```
 
-note that this will involve installing `torch` (you can modify it in the dependency file).
+note that this will involve installing `torch` (you can modify it in the dependency file), which would take a while to download.
+
+3. Using virtual envs: run
+
+```bash
+source ./.venv/bin/activate
+```
 
 ## Algorithms
 
-We use Collborative filtering (CF), Content-Based filtering with BERT (CFB) for distance metrics.
-
-For information retrieval, we use KNN, or by going through an additional step of clustering.
-
 ## Visualizations and Interactivities
-
-We visualize the clusters using D3 (probably).
-
