@@ -92,10 +92,12 @@ for subdir in book_data:
             # Extract the author using regex
             author_match = re.search(r"Author: (.+)", file_content)
             author = author_match.group(1).strip() if author_match else ""
+            normalized_author = normalize_text(author)
 
             # Extract the title using regex
             title_match = re.search(r"Title: (.+)", file_content)
             title = title_match.group(1).strip() if title_match else ""
+            normalized_title = normalize_text(title)
 
             # Save the original file with the title and author name
             original_file_name = f"{normalize_text(title)}-{normalize_text(author)}.txt"
@@ -135,7 +137,7 @@ for subdir in book_data:
 
             # Save the processed file with reduced word count
             processed_file_name = (
-                f"{os.path.splitext(file_name)[0]}-{title}-{author}.txt"
+                f"{os.path.splitext(file_name)[0]}-{normalized_title}-{normalized_author}.txt"
             )
             processed_file_path = os.path.join(processed_dir, processed_file_name)
             with open(processed_file_path, "w", encoding="utf-8-sig") as file:
