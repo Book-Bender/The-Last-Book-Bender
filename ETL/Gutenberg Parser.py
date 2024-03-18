@@ -34,32 +34,31 @@ def normalize_text(text):
     words = text.split()
     filtered_words = [
         word for word in words if not all(char == "-" for char in word)
-    ]  # Remove words that only contain hyphens
+    ]
     text = " ".join(filtered_words)
 
     return text
 
-
 # Read the numeric subdirectories from books.csv (skipping the first line)
-with open("books.csv", "r", encoding="utf-8") as file:
+with open("Data/books.csv", "r", encoding="utf-8") as file:
     csv_reader = csv.reader(file)
     next(csv_reader)  # Skip the header line
     book_data = [row[2] for row in csv_reader]  # Extract the subdirectory
 
 # Create directories to store the downloaded files
-original_dir = "original_books"
-processed_dir = "processed_books"
+original_dir = "Data/original_books"
+processed_dir = "Data/processed_books"
 os.makedirs(original_dir, exist_ok=True)
 os.makedirs(processed_dir, exist_ok=True)
 
 # Take a random sample of 1000 items from book_data to ensure diversity
-sample_size = 1000
-sampled_book_data = random.sample(book_data, sample_size)
+# sample_size = 10
+# sampled_book_data = random.sample(book_data, sample_size)
 
-processed_count = 0  # Counter for successfully processed files
+# processed_count = 0  # Counter for successfully processed files
 
 # Iterate over each book
-for subdir in sampled_book_data:
+for subdir in book_data:
     # Construct the URL for the subdirectory
     subdir_parts = [
         char for char in subdir[:-1]
@@ -142,20 +141,20 @@ for subdir in sampled_book_data:
             with open(processed_file_path, "w", encoding="utf-8-sig") as file:
                 file.write(processed_content)
 
-            processed_count += (
-                1  # Increment the counter for successfully processed files
-            )
+            # processed_count += (
+            #     1  # Increment the counter for successfully processed files
+            # )
             print(f"Downloaded and processed: {file_name}")
         else:
             print(f"Skipping file: {file_name} (Language is not English)")
     else:
         print(f"No .txt file found in subdirectory: {subdir}")
 
-    if processed_count >= sample_size:
-        break  # Stop downloading and processing once the desired sample size is reached
+    # if processed_count >= sample_size:
+    #     break  # Stop downloading and processing once the desired sample size is reached
 
 # Combine all processed files into a single file
-combined_file_path = "combined_processed_files.txt"
+combined_file_path = "Data/combined_processed_files.txt"
 
 with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined_file:
     combined_file.write(
@@ -168,7 +167,6 @@ with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined
             processed_text = file.read()
 
         base_name = os.path.splitext(file_name)[0]
-        # title, author = base_name.split("-")[-2:-1]
 
         # Extract the numeric book_id from the base_name
         book_id = "".join(filter(str.isdigit, base_name))
