@@ -30,25 +30,25 @@ def normalize_text(text):
     return text
 
 # Read the numeric subdirectories from books.csv (skipping the first line)
-with open("books.csv", "r", encoding="utf-8") as file:
+with open("Data/books.csv", "r", encoding="utf-8") as file:
     csv_reader = csv.reader(file)
     next(csv_reader)  # Skip the header line
     book_data = [row[2] for row in csv_reader]  # Extract the subdirectory
 
 # Create directories to store the downloaded files
-original_dir = "original_books"
-processed_dir = "processed_books"
+original_dir = "Data/original_books"
+processed_dir = "Data/processed_books"
 os.makedirs(original_dir, exist_ok=True)
 os.makedirs(processed_dir, exist_ok=True)
 
 # Take a random sample of 1000 items from book_data to ensure diversity
-sample_size = 1000
-sampled_book_data = random.sample(book_data, sample_size)
+# sample_size = 1000
+# sampled_book_data = random.sample(book_data, sample_size)
 
-processed_count = 0  # Counter for successfully processed files
+# processed_count = 0  # Counter for successfully processed files
 
 # Iterate over each book
-for subdir in sampled_book_data:
+for subdir in book_data:
     # Construct the URL for the subdirectory
     subdir_parts = [char for char in subdir[:-1]]  # Split the subdirectory into individual digits (except the last)
     subdir_url = base_url + "/".join(subdir_parts) + "/" + subdir + "/"
@@ -77,16 +77,18 @@ for subdir in sampled_book_data:
         
         # Check if "Language: English" is present in the file content
         if re.search(r"Language: English", file_content):
-            # Extract the author using regex
+            # Extract the author using regex and normalize
             author_match = re.search(r"Author: (.+)", file_content)
             author = author_match.group(1).strip() if author_match else ""
+            normalized_author = normalize_text(author)
             
-            # Extract the title using regex
+            # Extract the title using regex and normalize
             title_match = re.search(r"Title: (.+)", file_content)
             title = title_match.group(1).strip() if title_match else ""
+            normalized_title = normalize_text(title)
             
-            # Save the original file with the title and author name
-            original_file_name = f"{normalize_text(title)}-{normalize_text(author)}.txt"
+            # Save the original file with the normalized title and author name
+            original_file_name = f"{normalized_title}-{normalized_author}.txt"
             original_file_path = os.path.join(original_dir, original_file_name)
             with open(original_file_path, "w", encoding="utf-8-sig") as file:
                 file.write(file_content)
@@ -114,23 +116,23 @@ for subdir in sampled_book_data:
                 processed_content = " ".join(words)
         
             # Save the processed file with reduced word count
-            processed_file_name = f"{os.path.splitext(file_name)[0]}-{title}-{author}.txt"
+            processed_file_name = f"{os.path.splitext(file_name)[0]}-{normalized_title}-{normalized_author}.txt"
             processed_file_path = os.path.join(processed_dir, processed_file_name)
             with open(processed_file_path, "w", encoding="utf-8-sig") as file:
                 file.write(processed_content)
 
-            processed_count += 1  # Increment the counter for successfully processed files
+            # processed_count += 1  # Increment the counter for successfully processed files
             print(f"Downloaded and processed: {file_name}")
         else:
             print(f"Skipping file: {file_name} (Language is not English)")
     else:
         print(f"No .txt file found in subdirectory: {subdir}")
 
-    if processed_count >= sample_size:
-        break  # Stop downloading and processing once the desired sample size is reached
+    # if processed_count >= sample_size:
+    #     break  # Stop downloading and processing once the desired sample size is reached
 
 # Combine all processed files into a single file
-combined_file_path = "combined_processed_files.txt"
+combined_file_path = "Data/combined_processed_files.txt"
 
 with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined_file:
     combined_file.write("book_id,author,title,content,\n") # Write the first line with column names
@@ -141,7 +143,6 @@ with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined
             processed_text = file.read()
         
         base_name = os.path.splitext(file_name)[0]
-        # title, author = base_name.split("-")[-2:-1]
 
         # Extract the numeric book_id from the base_name
         book_id = "".join(filter(str.isdigit, base_name))
@@ -150,7 +151,7 @@ with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined
         if not book_id:
             book_id = base_name
         
-        combined_file.write(f"{book_id},{author},{title},{processed_text},\n")
+        combined_file.write(f"{book_id},{normalized_author},{normalized_title},{processed_text},\n")
         combined_file.write("\n")  # Add a blank line between each processed file
 
 print("Download, processing, and combining completed.")
