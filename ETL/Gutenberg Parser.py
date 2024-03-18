@@ -30,7 +30,7 @@ def normalize_text(text):
         .decode("utf-8-sig")
     )  # Normalize Unicode characters
 
-    # Remove single-character words and words with a single character on either side of a hyphen
+    # Remove words that consist of only hyphens
     words = text.split()
     filtered_words = [
         word for word in words if not all(char == "-" for char in word)
@@ -70,7 +70,7 @@ for subdir in sampled_book_data:
     response = requests.get(subdir_url)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Check if any link in the subdirectory contains "mp3" thus avoiding downloading audio files
+    # Check if links in the subdirectory contain "mp3" to avoid downloading audio files
     mp3_link = soup.find("a", href=lambda href: href and "mp3" in href.lower())
 
     if mp3_link:
