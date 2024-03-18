@@ -2,7 +2,7 @@
 
 ## Dataset
 
-We will be using the `good-books-10k-extended` [dataset](https://github.com/malcolmosh/goodbooks-10k-extended).
+We will be using the `good-books-10k-extended` [dataset](https://github.com/malcolmosh/goodbooks-10k-extended), and the `gutenberg` [datasets](http://aleph.gutenberg.org/).
 
 ## Getting started
 
@@ -26,6 +26,10 @@ note that this will involve installing `torch` (you can modify it in the depende
 source ./.venv/bin/activate
 ```
 
+If you are using `fish`, `csh` or `powershell` shells, the file might be `activate.fish`, `activate.csh`, `Activate.ps1`.
+
 ## Algorithms
+
+CF with CBF (with BERT applied).
 
 ## Visualizations and Interactivities
