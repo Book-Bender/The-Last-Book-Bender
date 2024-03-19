@@ -4,6 +4,8 @@ import random
 import re
 import string
 import unicodedata
+import time
+from requests.exceptions import Timeout
 
 import nltk
 import requests
@@ -58,16 +60,23 @@ os.makedirs(processed_dir, exist_ok=True)
 # processed_count = 0  # Counter for successfully processed files
 
 # Iterate over each book
-for subdir in book_data:
+for subdir in book_data[38342:]:
     # Construct the URL for the subdirectory
     subdir_parts = [
         char for char in subdir[:-1]
     ]  # Split the subdirectory into individual digits (except the last)
     subdir_url = base_url + "/".join(subdir_parts) + "/" + subdir + "/"
 
-    # Send a GET request to the subdirectory URL, and parse the HTML content
-    response = requests.get(subdir_url)
-    soup = BeautifulSoup(response.content, "html.parser")
+    while True:
+        try:
+            # Send a GET request to the subdirectory URL, and parse the HTML content
+            response = requests.get(subdir_url)
+            soup = BeautifulSoup(response.content, "html.parser")
+            break
+
+        except Timeout:
+            print(f"Timeout error occurred for subdirectory: {subdir_url}. Pausing for 5 minutes before retrying.")
+            time.sleep(300)  # Pause for 5 minutes (300 seconds)
 
     # Check if links in the subdirectory contain "mp3" to avoid downloading audio files
     mp3_link = soup.find("a", href=lambda href: href and "mp3" in href.lower())
@@ -83,9 +92,16 @@ for subdir in book_data:
         file_name = txt_link["href"]
         file_url = subdir_url + file_name
 
-        # Send a GET request to download the file
-        file_response = requests.get(file_url)
-        file_content = file_response.text
+        while True:
+            try:
+                # Send a GET request to download the file
+                file_response = requests.get(file_url)
+                file_content = file_response.text
+                break
+
+            except Timeout:
+                print(f"Timeout error occurred for subdirectory: {file_url}. Pausing for 5 minutes before retrying.")
+                time.sleep(300)  # Pause for 5 minutes (300 seconds)
 
         # Check if "Language: English" is present in the file content
         if re.search(r"Language: English", file_content):
@@ -169,6 +185,14 @@ with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined
             processed_text = file.read()
 
         base_name = os.path.splitext(file_name)[0]
+        parts = base_name.split("-")
+        
+        if len(parts) >= 3:
+            title = parts[-2]
+            author = parts[-1]
+        else:
+            title = ""
+            author = ""
 
         # Extract the numeric book_id from the base_name
         book_id = "".join(filter(str.isdigit, base_name))
