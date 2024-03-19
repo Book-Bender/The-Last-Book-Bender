@@ -1,10 +1,8 @@
-# modified from parts of the collaborative_filtering_alt.ipynb
+# this script converts ratings.csv to a csr matrix and save as an npz object
 import time
 
-import numpy as np
 import pandas as pd
 import scipy as sp
-from sklearn.neighbors import NearestNeighbors
 
 
 def load_ratings(
@@ -34,14 +32,18 @@ def load_ratings(
     return ratings_df.merge(sampled_user_ids, on="user_id")
 
 
-def csr_data_len(m):
+def density(
+    df: pd.DataFrame, row_key: str = "book_id", col_key: str = "user_id"
+) -> float:
     """
-    prints lenghts of data (data, indptr, indices) of a csr_matrix
+    Computes density of user-item matrix
+        (number of nonzero entries / number of all entries)
+    Assuming that the max of user_id, book_id are
     """
-    print(len(m.data), len(m.indptr), len(m.indices))
+    return df.shape[0] / df[[row_key, col_key]].max().product()
 
 
-def df_to_csr_nopivot(
+def df_to_csr(
     df: pd.DataFrame,
     row_key: str = "book_id",
     col_key: str = "user_id",
@@ -59,43 +61,24 @@ def df_to_csr_nopivot(
     this implementation consumes more memory
     (possible reason: number of empty columns)
     """
-    # convert df to sparse and
-    return sp.sparse.coo_matrix((df.rating, (df.book_id, df.user_id))).tocsr()
+    return sp.sparse.coo_matrix((df[val_key], (df[row_key], df[col_key]))).tocsr()
 
 
-def df_to_csr_pivot(
-    df: pd.DataFrame,
-    row_key: str = "book_id",
-    col_key: str = "user_id",
-    val_key: str = "rating",
-):
-    """
-    constructs csr matrix from df
-    this implementation uses pivot_table
-    df: the df to convert
-    row_key, col_key, val_key: name of columns in df defining the coo matrix
-        (that will be used to convert to csr)
-    this implementation calls the pivot_table
-    """
-    book_pivot = df.pivot_table(columns=col_key, index=row_key, values=val_key)
-    book_pivot.fillna(0, inplace=True)
-    return sp.sparse.csr_matrix(book_pivot.astype(float))
-
-
+# load csv
 load_time_start = time.time()
-ratings_df = load_ratings("../Data/Raw/ratings.csv", sample_size=5000)
-print(f"load_time: {time.time() - load_time_start} seconds")
+ratings_df = load_ratings("../Data/Raw/ratings.csv")
+print(f"load_time (csv): {time.time() - load_time_start} seconds")
+print(f"density of array: {density(ratings_df)}")
 
+# convert to sparse
 convert_time_start = time.time()
-book_sparse = df_to_csr_nopivot(ratings_df)
+book_sparse = df_to_csr(ratings_df)
 print(f"convert_time (w/o pivot): {time.time() - convert_time_start} seconds")
-csr_data_len(book_sparse)
 
-convert_time_start = time.time()
-book_sparse = df_to_csr_pivot(ratings_df)
-print(f"convert_time (w pivot): {time.time() - convert_time_start} seconds")
-csr_data_len(book_sparse)
-
+# save csr to npz
+save_time_start = time.time()
+sp.sparse.save_npz("../Data/Raw/ratings.npz", book_sparse)
+print(f"save_time: {time.time() - save_time_start} seconds")
 
 # model = NearestNeighbors(algorithm="brute")  ## model
 # model.fit(book_sparse)
