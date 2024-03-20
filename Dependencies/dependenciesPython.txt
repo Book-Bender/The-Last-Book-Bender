@@ -8,3 +8,4 @@ surprise
 torch == 2.2.1
 ipywidgets
 nltk == 3.8.1
+scikit-learn
