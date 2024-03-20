@@ -53,11 +53,16 @@ processed_dir = "Data/processed_books"
 os.makedirs(original_dir, exist_ok=True)
 os.makedirs(processed_dir, exist_ok=True)
 
-# Take a random sample of 1000 items from book_data to ensure diversity
-# sample_size = 10
-# sampled_book_data = random.sample(book_data, sample_size)
+'''
+# Remove block comment to execute a short run for testing
+# There is one additional block comment to remove att eh end of the main loop
 
-# processed_count = 0  # Counter for successfully processed files
+# Take a random sample of 10 items from book_data to ensure diversity
+sample_size = 10
+sampled_book_data = random.sample(book_data, sample_size)
+
+processed_count = 0  # Counter for successfully processed files
+'''
 
 # Iterate over each book
 for subdir in book_data[38342:]:
@@ -100,7 +105,7 @@ for subdir in book_data[38342:]:
                 break
 
             except Timeout:
-                print(f"Timeout error occurred for subdirectory: {file_url}. Pausing for 5 minutes before retrying.")
+                print(f"Timeout error occurred for file: {file_url}. Pausing for 5 minutes before retrying.")
                 time.sleep(300)  # Pause for 5 minutes (300 seconds)
 
         # Check if "Language: English" is present in the file content
@@ -159,9 +164,13 @@ for subdir in book_data[38342:]:
             with open(processed_file_path, "w", encoding="utf-8-sig") as file:
                 file.write(processed_content)
 
-            # processed_count += (
-            #     1  # Increment the counter for successfully processed files
-            # )
+            '''
+            # Remove block comment to execute a short run for testing
+            
+            processed_count += (
+                1  # Increment the counter for successfully processed files
+            )
+            '''
             print(f"Downloaded and processed: {file_name}")
         else:
             print(f"Skipping file: {file_name} (Language is not English)")
@@ -190,12 +199,11 @@ with open(combined_file_path, "w", encoding="utf-8-sig", newline="") as combined
         if len(parts) >= 3:
             title = parts[-2]
             author = parts[-1]
+            book_id = parts[0]
         else:
             title = ""
             author = ""
-
-        # Extract the numeric book_id from the base_name
-        book_id = "".join(filter(str.isdigit, base_name))
+            book_id = parts[0]
 
         # If the book_id is empty, use the original base_name
         if not book_id:
