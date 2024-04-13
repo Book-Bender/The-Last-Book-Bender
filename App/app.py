@@ -33,7 +33,7 @@ def bert_knn_recommendation():
     model = model.to(device)
 
     with torch.no_grad():
-        last_hidden_states = model(input_ids)
+        last_hidden_states = model(input_ids, attention_mask=attention_mask)
 
     query_embeddings = last_hidden_states[0].cpu().data[:, 0, :].numpy()
 
@@ -44,11 +44,11 @@ def bert_knn_recommendation():
     k = 5
     recommendations = ""
     for book_rec in indices:
-        i += 1
         j = 0
         recommendations += f"Top {k} recommendations for query {i}:"
         for index in book_rec:
+            recommendations += f"\t{j}. {embeddings_pd_df.iloc[index]['title']}, score={distances[i][j]}"
             j += 1
-            recommendations += f"\t{j}. {embeddings_pd_df.iloc[index]['title']}"
+        i += 1
 
-    return recommendations + f"<p>{knn_model}</p><p>{query_embeddings}</p>"
+    return recommendations
