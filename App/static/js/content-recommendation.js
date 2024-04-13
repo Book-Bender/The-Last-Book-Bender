@@ -21,7 +21,7 @@ function recommendBooks() {
 function generate_force_graph(recommendations) {
     var links = [];
     var nodes = {};
-    var width = 1200, height = 1000;
+    var width = window.innerWidth, height = 800;
 
     // compute the distinct nodes from the links.
     for (let key in recommendations) {
@@ -65,7 +65,7 @@ function generate_force_graph(recommendations) {
             if (d.index == Object.keys(recommendations).length - 1) {
                 return "query node";
             }
-            return "nodes";
+            return "node";
         })
         .call(d3.drag()
             .on("start", dragstarted)
@@ -96,7 +96,7 @@ function generate_force_graph(recommendations) {
     node.append("text")
         .attr("id", "title")
         .text(function(d){
-            return d.name;
+            return `___ ${d.name}`;
         });
 
     node.on("dblclick", function(d){

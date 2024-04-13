@@ -29,7 +29,8 @@ def bert_knn_recommendation(query):
     model = model_class.from_pretrained(pretrained_weights)
 
     # Tokenize query
-    tokenized = tokenizer.encode(str(query), add_special_tokens=True)
+    query = " ".join(query.split(" ")[:256])  # get the first 256 words
+    tokenized = tokenizer.encode(query, add_special_tokens=True)
 
     max_len = len(tokenized)
     padding = [0] * (max_len - len(tokenized))
