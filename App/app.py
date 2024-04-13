@@ -18,13 +18,17 @@ def content_based_recommendation():
 
 @app.route("/recommend/<query>", methods=['GET'])
 def bert_knn_recommendation(query):
+    # Load pretrained models and data
+    device = torch.device('cpu')
+    embeddings_pd_df = pd.read_json("Data/Embeddings/bert-embeddings-10k-small.json")
     knn_model = pickle.load(open('Models/BERT-KNN.pkl', 'rb'))
-
     model_class, tokenizer_class, pretrained_weights = (ppb.BertModel, ppb.BertTokenizer, 'bert-base-uncased')
 
-    # Load pretrained model/tokenizer
+    # Load pretrained BERT/tokenizer
     tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
     model = model_class.from_pretrained(pretrained_weights)
+
+    # Tokenize query
     tokenized = tokenizer.encode(str(query), add_special_tokens=True)
 
     max_len = 256
@@ -32,8 +36,7 @@ def bert_knn_recommendation(query):
     padded = np.array(tokenized + padding)
     attention_mask = np.where(padded != 0, 1, 0)
 
-    device = torch.device('cpu')
-
+    # Embed query with BERT
     input_ids = torch.tensor(padded).unsqueeze_(0).to(device)
     attention_mask = torch.tensor(attention_mask).unsqueeze_(0).to(device)
     model = model.to(device)
@@ -43,9 +46,9 @@ def bert_knn_recommendation(query):
 
     query_embeddings = last_hidden_states[0].cpu().data[:, 0, :].numpy()
 
+    # Compute KNN scores and fill up the response JSON
+    data = {}
     distances, indices = knn_model.kneighbors(query_embeddings)
-
-    embeddings_pd_df = pd.read_json("Data/Embeddings/bert-embeddings-10k-small.json")
     i = 0
     k = 5
     recommendations = ""
@@ -53,11 +56,11 @@ def bert_knn_recommendation(query):
         j = 0
         recommendations += f"Top {k} recommendations for query {i}:"
         for index in book_rec:
-            recommendations += f"\t{j}. {embeddings_pd_df.iloc[index]['title']}, score={distances[i][j]}"
+            data[j] = {
+                "title": embeddings_pd_df.iloc[index]['title'],
+                "score": distances[i][j]
+            }
             j += 1
-        i += 1
 
-    data = {
-        "recommendations": recommendations
-    }
+    # Return payload
     return jsonify(data)

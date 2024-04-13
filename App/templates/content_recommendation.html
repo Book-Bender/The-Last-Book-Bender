@@ -7,8 +7,10 @@
          src = "{{ url_for('static', filename = 'js/content-recommendation.js') }}" ></script>
 </head>
 <body>
+<script type="text/javascript" src="{{ url_for('static', filename = 'assets/d3.v5.min.js') }}"></script>
 <text>Enter some text about the books that you like...</text>
 <textarea id="user_query"></textarea>
 <input type = "button" onclick = "recommendBooks()" value = "Generate Recommendations!" />
+<svg></svg>
 </body>
 </html>
