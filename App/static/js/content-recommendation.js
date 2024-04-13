@@ -214,7 +214,7 @@ function expand_force_graph(new_recommendations, old_recommendations) {
             links.push({
                 "source": nodes[query_key],
                 "target": nodes[key + offset] || (nodes[key + offset] = {name: new_recommendations[key].title, pandas_index: new_recommendations[key].pandas_index}),
-                "distance": new_recommendations[key].score
+                "distance": new_recommendations[key].score + new_recommendations['query'].score
             });
         }
     }
@@ -238,14 +238,10 @@ function expand_force_graph(new_recommendations, old_recommendations) {
         i += 1;
     }
 
-    console.log(recommendations);
-    console.log(links);
-    console.log(nodes);
-
     let force = d3.forceSimulation()
         .nodes(d3.values(nodes))
         .force("link", d3.forceLink(links).distance(function(link) {
-            return 2 ** link.distance;
+            return 2.3 ** link.distance;
         }))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX())
