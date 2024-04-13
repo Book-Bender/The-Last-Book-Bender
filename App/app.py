@@ -31,7 +31,7 @@ def bert_knn_recommendation(query):
     # Tokenize query
     tokenized = tokenizer.encode(str(query), add_special_tokens=True)
 
-    max_len = 256
+    max_len = len(tokenized)
     padding = [0] * (max_len - len(tokenized))
     padded = np.array(tokenized + padding)
     attention_mask = np.where(padded != 0, 1, 0)

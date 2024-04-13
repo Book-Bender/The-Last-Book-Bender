@@ -6,11 +6,46 @@
     <script type = "text/javascript"
          src = "{{ url_for('static', filename = 'js/content-recommendation.js') }}" ></script>
 </head>
-<body>
-<script type="text/javascript" src="{{ url_for('static', filename = 'assets/d3.v5.min.js') }}"></script>
-<text>Enter some text about the books that you like...</text>
-<textarea id="user_query"></textarea>
-<input type = "button" onclick = "recommendBooks()" value = "Generate Recommendations!" />
-<svg></svg>
-</body>
+
+<style>
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path#similar {}
+
+path#not-similar {
+  stroke: green;
+  stroke-width: .5px;
+  stroke-dasharray: 1;
+}
+
+circle {
+  stroke: #fff;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+text {
+  fill: #000;
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+#title {
+  font-weight: bold;
+}
+
+</style>
+
+    <body>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'assets/d3.v5.min.js') }}"></script>
+        <text>Enter some text about the books that you like...</text>
+        <textarea id="user_query"></textarea>
+        <input type = "button" onclick = "recommendBooks()" value = "Generate Recommendations!" />
+        <svg></svg>
+    </body>
 </html>

@@ -21,25 +21,28 @@ function recommendBooks() {
 function generate_force_graph(recommendations) {
     var links = [];
     var nodes = {};
-    var width = 1200, height = 700;
+    var width = 1200, height = 1000;
 
     // compute the distinct nodes from the links.
     for (let key in recommendations) {
         links.push({
             "source": nodes['query'] || (nodes['query'] = {name: recommendations['query'].title}),
             "target": nodes[key] || (nodes[key] = {name: recommendations[key].title}),
+            "distance": recommendations[key].score
         })
     }
 
     var force = d3.forceSimulation()
-      .nodes(d3.values(nodes))
-      .force("link", d3.forceLink(links).distance(100))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force("x", d3.forceX())
-      .force("y", d3.forceY())
-      .force("charge", d3.forceManyBody().strength(-250))
-      .alphaTarget(1)
-      .on("tick", tick);
+        .nodes(d3.values(nodes))
+        .force("link", d3.forceLink(links).distance(function(link) {
+            return 2 ** link.distance;
+        }))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .force("charge", d3.forceManyBody().strength(-300))
+        .alphaTarget(1)
+        .on("tick", tick);
 
     var svg = d3.select("body").append("svg")
       .attr("width", width)
@@ -70,11 +73,7 @@ function generate_force_graph(recommendations) {
          return (d.name.replace(/\s+/g,'').toLowerCase());
       })
       .attr("r", function(d) {
-          d.weight = links.filter(function(l) {
-            // Source: https://stackoverflow.com/questions/43906686/d3-node-radius-depends-on-number-of-links-weight-property
-             return l.source.index == d.index || l.target.index == d.index
-           }).length;
-          return d.weight**2;
+          return 10;
       })
       .attr("fill", function(d) {
           if (d.weight > 5) {
@@ -95,23 +94,26 @@ function generate_force_graph(recommendations) {
       });
 
     node.on("dblclick", function(d){
-      d.fx = null;
-      d.fy = null;
+        d.fx = null;
+        d.fy = null;
 
-      if (d.weight > 5) {
+        if (d.weight > 5) {
           d3.select(this).select("circle").attr("fill", "#2b8cbe");
-      }
-      else if (d.weight > 3) {
+        }
+        else if (d.weight > 3) {
           d3.select(this).select("circle").attr("fill", "#a6bddb");
-      }
-      else {
+        }
+        else {
           d3.select(this).select("circle").attr("fill", "#ece7f2");
-      }
-    });
+        }
+        });
 
     // add the curvy lines
     function tick() {
       path.attr("d", function(d) {
+          console.log(d);
+
+
           var dx = d.target.x - d.source.x,
               dy = d.target.y - d.source.y,
               dr = Math.sqrt(dx * dx + dy * dy);
