@@ -42,13 +42,13 @@ function generate_force_graph(recommendations) {
     let force = d3.forceSimulation()
         .nodes(d3.values(nodes))
         .force("link", d3.forceLink(links).distance(function(link) {
-            return 2 ** link.distance;
+            return 2.325 ** link.distance;
         }))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody().strength(-300).distanceMax(100))
-        .alphaTarget(1)
+        .force("charge", d3.forceManyBody().strength(-300).distanceMax(2 ** 8))
+        .alphaTarget(.01)
         .on("tick", tick);
 
     let svg = d3.select("body").append("svg")
@@ -241,13 +241,13 @@ function expand_force_graph(new_recommendations, old_recommendations) {
     let force = d3.forceSimulation()
         .nodes(d3.values(nodes))
         .force("link", d3.forceLink(links).distance(function(link) {
-            return 2.3 ** link.distance;
+            return 2.5 ** link.distance;
         }))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody().strength(-30).distanceMax(100))
-        .alphaTarget(1)
+        .force("charge", d3.forceManyBody().strength(-300).distanceMax(2 ** 8))
+        .alphaTarget(.01)
         .on("tick", tick);
 
     let svg = d3.select("body").append("svg")
