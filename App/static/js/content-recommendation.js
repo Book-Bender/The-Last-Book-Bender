@@ -1,4 +1,10 @@
 function recommendBooks() {
+    let element = document.getElementById("force_graph");
+
+    if (element != null) {
+        element.remove();
+    }
+
     let query = document.getElementById("user_query");
 
     if (query.value === '') {
@@ -45,17 +51,18 @@ function generate_force_graph(recommendations) {
         .on("tick", tick);
 
     var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+        .attr("id", "force_graph")
+        .attr("width", width)
+        .attr("height", height);
 
     // add the links
     var path = svg.append("g")
-      .selectAll("path")
-      .data(links)
-      .enter()
-      .append("path")
-      .attr("id", function(d) { return d.value == 0 ? "similar" : "not-similar"; })
-      .attr("class", function(d) { return "link " + d.type; });
+        .selectAll("path")
+        .data(links)
+        .enter()
+        .append("path")
+        .attr("id", function(d) { return d.value == 0 ? "similar" : "not-similar"; })
+        .attr("class", function(d) { return "link " + d.type; });
 
     // define the nodes
     var node = svg.selectAll(".node")
