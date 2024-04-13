@@ -62,7 +62,7 @@ function generate_force_graph(recommendations) {
         .data(links)
         .enter()
         .append("path")
-        .attr("id", function(d) { return d.value == 0 ? "similar" : "not-similar"; })
+        .attr("id", function(d) { return "similar"; })
         .attr("class", function(d) { return "link " + d.type; });
 
     // define the nodes
@@ -121,7 +121,7 @@ function generate_force_graph(recommendations) {
           d3.select(this).select("circle").attr("fill", "#ece7f2");
         }
 
-        const url = `http://localhost:5000/recommend_from_library/${d.pandas_index}`
+        const url = `http://localhost:5000/recommend_from_library/${d.pandas_index}`;
         fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -130,7 +130,7 @@ function generate_force_graph(recommendations) {
                     'title': d.name,
                     'pandas_index': d.pandas_index,
                 }
-                expand_force_graph(json);
+                expand_force_graph(json, recommendations);
             })
     });
 
@@ -179,19 +179,68 @@ function generate_force_graph(recommendations) {
     };
 }
 
-function expand_force_graph(recommendations) {
+function expand_force_graph(new_recommendations, old_recommendations) {
     let links = [];
     let nodes = {};
     let width = window.innerWidth, height = 800;
 
+    // Remove old graph
+    let element = document.getElementById("force_graph");
+
+    if (element != null) {
+        element.remove();
+    }
+
     // compute the distinct nodes from the links.
-    for (let key in recommendations) {
+    for (let key in old_recommendations) {
         links.push({
-            "source": nodes['query'] || (nodes['query'] = {name: recommendations['query'].title, pandas_index: -1}),
-            "target": nodes[key] || (nodes[key] = {name: recommendations[key].title, pandas_index: recommendations[key].pandas_index}),
-            "distance": recommendations[key].score
+            "source": nodes['query'] || (nodes['query'] = {name: old_recommendations['query'].title, pandas_index: -1}),
+            "target": nodes[key] || (nodes[key] = {name: old_recommendations[key].title, pandas_index: old_recommendations[key].pandas_index}),
+            "distance": old_recommendations[key].score
         })
     }
+
+    // Find the new query node in the old query results
+    let query_key = -1;
+    for (let key in nodes) {
+        if (nodes[key].name == new_recommendations['query'].title) {
+            query_key = key;
+        }
+    }
+
+    let offset = Object.keys(old_recommendations).length;
+    for (let key in new_recommendations) {
+        if (key != 'query') {
+            links.push({
+                "source": nodes[query_key],
+                "target": nodes[key + offset] || (nodes[key + offset] = {name: new_recommendations[key].title, pandas_index: new_recommendations[key].pandas_index}),
+                "distance": new_recommendations[key].score
+            });
+        }
+    }
+
+    // merge the recommendations into 1
+    delete new_recommendations['query'];  // Remove the current query
+    let recommendations = {};
+    let i = 0;
+
+    for (let key in old_recommendations) {
+        if (key == 'query') {
+            recommendations['query'] = old_recommendations[key];
+        } else {
+            recommendations[i] = old_recommendations[key];
+            i += 1;
+        }
+    }
+
+    for (let key in new_recommendations) {
+        recommendations[i] = new_recommendations[key];
+        i += 1;
+    }
+
+    console.log(recommendations);
+    console.log(links);
+    console.log(nodes);
 
     let force = d3.forceSimulation()
         .nodes(d3.values(nodes))
@@ -201,11 +250,14 @@ function expand_force_graph(recommendations) {
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody().strength(-300).distanceMax(100))
+        .force("charge", d3.forceManyBody().strength(-30).distanceMax(100))
         .alphaTarget(1)
         .on("tick", tick);
 
-    let svg = d3.select("body").select("svg")
+    let svg = d3.select("body").append("svg")
+        .attr("id", "force_graph")
+        .attr("width", width)
+        .attr("height", height);
 
     // add the links
     let path = svg.append("g")
@@ -213,7 +265,7 @@ function expand_force_graph(recommendations) {
         .data(links)
         .enter()
         .append("path")
-        .attr("id", function(d) { return d.value == 0 ? "similar" : "not-similar"; })
+        .attr("id", function(d) { return "similar"; })
         .attr("class", function(d) { return "link " + d.type; });
 
     // define the nodes
@@ -272,7 +324,7 @@ function expand_force_graph(recommendations) {
           d3.select(this).select("circle").attr("fill", "#ece7f2");
         }
 
-        const url = `http://localhost:5000/recommend_from_library/${d.pandas_index}`
+        const url = `http://localhost:5000/recommend_from_library/${d.pandas_index}`;
         fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -281,7 +333,7 @@ function expand_force_graph(recommendations) {
                     'title': d.name,
                     'pandas_index': d.pandas_index,
                 }
-                expand_force_graph(json);
+                expand_force_graph(json, recommendations);
             })
     });
 

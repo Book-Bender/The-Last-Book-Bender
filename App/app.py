@@ -82,10 +82,12 @@ def bert_knn_recommendation_from_library(book_id):
         j = 0
         recommendations += f"Top {k} recommendations for query {i}:"
         for index in book_rec:
-            data[j] = {
-                "title": embeddings_pd_df.iloc[index]['title'],
-                "score": distances[i][j]
-            }
+            if str(index) != str(book_id):
+                data[j] = {
+                    "title": embeddings_pd_df.iloc[index]['title'],
+                    "score": distances[i][j],
+                    "pandas_index": str(index),
+                }
             j += 1
 
     # Return payload
