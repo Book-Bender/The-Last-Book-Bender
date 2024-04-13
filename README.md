@@ -1,5 +1,14 @@
 # The-Last-Book-Bender
 
+# Setup
+## Conda and Requirements
+    conda create --name DVA_Final python=3.9 \
+    conda activate DVA_Final \
+    pip install -r App/requirements.txt
+
+# Flask Application
+Run `flask --app App/app run`
+
 ## Dataset
 
 We will be using the `good-books-10k-extended` [dataset](https://github.com/malcolmosh/goodbooks-10k-extended), and the `Gutenberg Project` [datasets](http://aleph.gutenberg.org/).
