@@ -40,7 +40,7 @@ function generate_force_graph(recommendations) {
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("charge", d3.forceManyBody().strength(-300))
+        .force("charge", d3.forceManyBody().strength(-300).distanceMax(100))
         .alphaTarget(1)
         .on("tick", tick);
 
@@ -59,13 +59,19 @@ function generate_force_graph(recommendations) {
 
     // define the nodes
     var node = svg.selectAll(".node")
-      .data(force.nodes())
-      .enter().append("g")
-      .attr("class", "node")
-      .call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
+        .data(force.nodes())
+        .enter().append("g")
+        .attr("class", function(d) {
+            if (d.index == Object.keys(recommendations).length - 1) {
+                return "query node";
+            }
+            return "nodes";
+        })
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        );
 
     // add the nodes
     node.append("circle")
@@ -88,10 +94,10 @@ function generate_force_graph(recommendations) {
       });
 
     node.append("text")
-      .attr("id", "title")
-      .text(function(d){
-          return d.name;
-      });
+        .attr("id", "title")
+        .text(function(d){
+            return d.name;
+        });
 
     node.on("dblclick", function(d){
         d.fx = null;
@@ -111,9 +117,6 @@ function generate_force_graph(recommendations) {
     // add the curvy lines
     function tick() {
       path.attr("d", function(d) {
-          console.log(d);
-
-
           var dx = d.target.x - d.source.x,
               dy = d.target.y - d.source.y,
               dr = Math.sqrt(dx * dx + dy * dy);
