@@ -51,6 +51,31 @@ def bert_knn_recommendation(query):
     data = {}
     distances, indices = knn_model.kneighbors(query_embeddings)
     i = 0
+    for book_rec in indices:
+        j = 0
+        for index in book_rec:
+            data[j] = {
+                "title": embeddings_pd_df.iloc[index]['title'],
+                "score": distances[i][j],
+                "pandas_index": str(index),
+            }
+            j += 1
+
+    # Return payload
+    return jsonify(data)
+
+
+@app.route("/recommend_from_library/<book_id>", methods=['GET'])
+def bert_knn_recommendation_from_library(book_id):
+    # Load pretrained models and data
+    embeddings_pd_df = pd.read_json("Data/Embeddings/bert-embeddings-10k-small.json")
+    knn_model = pickle.load(open('Models/BERT-KNN.pkl', 'rb'))
+
+    # Compute KNN scores and fill up the response JSON
+    data = {}
+    query = np.expand_dims(embeddings_pd_df.iloc[int(book_id)]['embedding'], 0)
+    distances, indices = knn_model.kneighbors(query)
+    i = 0
     k = 5
     recommendations = ""
     for book_rec in indices:
