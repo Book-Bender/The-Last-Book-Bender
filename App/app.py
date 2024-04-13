@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, render_template, jsonify
+from flask_cors import CORS
 
 import pickle
 import numpy as np
@@ -7,14 +8,19 @@ import pandas as pd
 import transformers as ppb
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
-def bert_knn_recommendation():
+def content_based_recommendation():
+    return render_template('content_recommendation.html')
+
+
+@app.route("/recommend/<query>", methods=['GET'])
+def bert_knn_recommendation(query):
     knn_model = pickle.load(open('Models/BERT-KNN.pkl', 'rb'))
 
     model_class, tokenizer_class, pretrained_weights = (ppb.BertModel, ppb.BertTokenizer, 'bert-base-uncased')
-    query = 'I want a book similar to Harry Potter, with wizards and magic'
 
     # Load pretrained model/tokenizer
     tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
@@ -51,4 +57,7 @@ def bert_knn_recommendation():
             j += 1
         i += 1
 
-    return recommendations
+    data = {
+        "recommendations": recommendations
+    }
+    return jsonify(data)

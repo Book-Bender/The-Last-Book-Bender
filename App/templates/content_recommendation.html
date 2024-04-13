@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Based Recommendation</title>
+    <script type = "text/javascript"
+         src = "{{ url_for('static', filename = 'js/content-recommendation.js') }}" ></script>
+</head>
+<body>
+<text>Enter some text about the books that you like...</text>
+<textarea id="user_query"></textarea>
+<input type = "button" onclick = "recommendBooks()" value = "Generate Recommendations!" />
+</body>
+</html>
