@@ -5,6 +5,10 @@
     <title>Content Based Recommendation</title>
     <script type = "text/javascript"
          src = "{{ url_for('static', filename = 'js/content-recommendation.js') }}" ></script>
+    <script type = "text/javascript"
+         src = "{{ url_for('static', filename = 'js/content-recommendation_v2.js') }}" ></script>
+    <!-- icon for our project -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
 </head>
 
 <style>
@@ -29,7 +33,7 @@ circle {
   stroke-width: 1.5px;
 }
 
-text #user_input {
+text .user_input {
   fill: #000;
   font: 20px sans-serif;
   pointer-events: none;
@@ -42,7 +46,7 @@ text {
 }
 
 /* Source: https://gist.github.com/ayoungh/4276512 */
-#user_query {
+.user_query {
     margin-top: 10px;
     margin-left: 0px;
     margin-bottom: 10px;
@@ -68,7 +72,7 @@ text {
 }
 
 /* Source: https://getcssscan.com/css-buttons-examples */
-#query_submit {
+.query_submit {
     background-color: #e1ecf4;
     border-radius: 3px;
     border: 1px solid #7aa7c7;
@@ -95,19 +99,19 @@ text {
 }
 
 /* Source: https://getcssscan.com/css-buttons-examples */
-#query_submit:hover,
-#query_submit:focus {
+.query_submit:hover,
+.query_submit:focus {
   background-color: #b3d3ea;
   color: #2c5777;
 }
 
 /* Source: https://getcssscan.com/css-buttons-examples */
-#query_submit:focus {
+.query_submit:focus {
   box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
 }
 
 /* Source: https://getcssscan.com/css-buttons-examples */
-#query_submit:active {
+.query_submit:active {
   background-color: #a0c7e4;
   box-shadow: none;
   color: #2c5777;
@@ -117,7 +121,7 @@ text {
   font-weight: bold;
 }
 
-#input_modal {
+.input_modal {
     max-width: fit-content;
     margin-top: 50px;
     margin-left: auto;
@@ -128,12 +132,19 @@ text {
     <body>
         <script type="text/javascript" src="{{ url_for('static', filename = 'assets/d3.v5.min.js') }}"></script>
 
-        <div id="input_modal">
-            <text id="query_prompt">Enter some text about the books that you like...</text>
+        <div class="input_modal">
+            <text class="query_prompt">Enter some text about the books that you like...</text>
             </br>
-            <textarea id="user_query">I want to find books similar to Harry Potter. I like wizards and magic. Nothing too scary.</textarea>
+            <textarea class="user_query" id="user_query_1">I want to find books similar to Harry Potter. I like wizards and magic. Nothing too scary.</textarea>
             </br>
-            <input id="query_submit" type="button" onclick="recommendBooks()" value="Generate Recommendations!" />
+            <input class="query_submit" type="button" onclick="recommendBooks()" value="Generate Recommendations!" />
+        </div>
+
+        <div class="input_modal">
+            <text class="query_prompt">Enter an user id that is similar to you</text>
+            <input type="number" id="user_query_2" min="1" max="53424">
+            </br>
+            <input class="query_submit" id="user_query_2" type="button" onclick="recommendBooksV2()" value="Generate Recommendations!" />
         </div>
 
     </body>
