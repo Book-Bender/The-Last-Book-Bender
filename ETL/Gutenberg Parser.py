@@ -17,7 +17,7 @@ nltk.download("stopwords")
 
 # URL of the website source for books from the Gutenberg project
 base_url = "http://aleph.gutenberg.org/"
-
+base2_url = "https://raw.githubusercontent.com/malcolmosh/goodbooks-10k/master/books_enriched.csv"
 
 # Function to normalize text
 def normalize_text(text):
@@ -41,6 +41,9 @@ def normalize_text(text):
 
     return text
 
+# GUTINDEX.ALL (downloaded from http://aleph.gutenberg.org/) contains all books indexed
+# Excel and Power Query were used to extract the title, author, and ebook number
+# the ebook number is encoded with the directory location of the ebook
 # Read the numeric subdirectories from books.csv (skipping the first line)
 with open("Data/books.csv", "r", encoding="utf-8") as file:
     csv_reader = csv.reader(file)
@@ -65,7 +68,7 @@ processed_count = 0  # Counter for successfully processed files
 '''
 
 # Iterate over each book
-for subdir in book_data[38342:]:
+for subdir in book_data:
     # Construct the URL for the subdirectory
     subdir_parts = [
         char for char in subdir[:-1]
