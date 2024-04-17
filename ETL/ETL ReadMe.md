@@ -25,11 +25,17 @@ While running the code, we need to mount the drive . The code to implement this 
 
 ## Files added in repository
 a. gutenberg_books.txt (Gutenberg books dataset)
+
 b. good-reads-10k-transformed.txt (Goodreads dataset)
+
 c. bert_ETL_all_books_loop.ipynb (Bert ETL code to pull dataset from drive and create embeddings and KNN model of it)
+
 d. knn_model.pkl (pickled file)
+
 e. title_info.pkl (pickled file that stores the book titles)
+
 f. knn_model_compress.pkl.pbz2 (compressed pickled file)
+
 g. all_embeddings_compressed.npy (file with the embeddings for both the datasets)
 
 
