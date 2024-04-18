@@ -1,0 +1,32 @@
+{
+  "name": "material-ui-vite",
+  "version": "5.0.0",
+  "private": true,
+  "proxy": "http://127.0.0.1:5000",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "latest",
+    "axios": "^1.6.8",
+    "d3": "^7.9.0",
+    "eslint": "^9.0.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-force-graph": "^1.44.3",
+    "react-force-graph-2d": "^1.25.4",
+    "react-force-graph-3d": "^1.24.2",
+    "react-window": "^1.8.10"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "latest",
+    "prettier": "3.2.5",
+    "vite": "latest",
+    "vite-plugin-eslint": "^1.8.1"
+  }
+}
