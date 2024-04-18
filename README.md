@@ -1,5 +1,10 @@
 # The-Last-Book-Bender
 
+# About our Project
+The Last Book Bender is our book recommendation system that seeks to inspire a love for reading. Our goal is to create a welcoming environment where individuals of all ages and backgrounds can discover enriching literary experiences tailored to their interests and aspirations. With the proliferation of attention-grabbing sources of entertainment, our aim is to sustain peoples' passion for reading by facilitating the discovery of their next book and ensure that it is a page turner. Our objective is to develop and visualize a book recommendation system that suggests books to read by comparing content and using machine learning techniques.
+
+Our team found ways to enhance current methods by employing larger datasets and algorithms customized for the Goodreads rating scale. Through implementing BERT embeddings and a collaborative filtering algorithm optimized for a 1 to 5 scale, we created a more accurate book recommendation system tailored to user queries. Our project promotes new discoveries in the literary world for readers and bolsters engagement in libraries. With a focus on accessibility and scalability, we seek to establish a cost-effective approach for wider adaptation of our application.
+
 # Setup
 ## Conda and Requirements
     conda create --name DVA_Final python=3.9 \
