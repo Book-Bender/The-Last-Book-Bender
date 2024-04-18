@@ -10,3 +10,4 @@ ipywidgets
 nltk == 3.8.1
 scikit-learn
 matplotlib
+networkx
