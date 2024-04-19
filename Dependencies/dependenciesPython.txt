@@ -11,3 +11,17 @@ nltk == 3.8.1
 scikit-learn
 matplotlib
 networkx
+unicodedata
+nltk
+ast
+csv
+os
+random
+re
+string
+time
+requests
+bs4
+pickle
+cloudpickle
+blosc
