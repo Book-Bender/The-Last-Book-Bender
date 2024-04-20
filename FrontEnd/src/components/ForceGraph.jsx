@@ -40,6 +40,7 @@ const merge = (graph1, graph2, nodeRC) => {
 };
 
 const meltJson = (e) => {
+  console.log(e)
   return Object.entries(e)
     .map((r) => r[1])
     .sort((r1, r2) => r1.score - r2.score);
@@ -68,6 +69,7 @@ export default function ForceGraph({ querySubmitted, data, mode }) {
     if (nodeRC.id !== baseName) {
       const data = fetchData(nodeRC.id);
     }
+    console.log(data)
     setGraph(() => merge(graph, graphify(meltJson(data), nodeRC), nodeRC));
   }, [nodeRC]);
 

@@ -19,6 +19,7 @@ import ForceGraph from "../components/ForceGraph";
 import CbfInput from "../components/CbfInput";
 
 const meltJson = (e) => {
+  console.log(e)
   return Object.entries(e)
     .map((r) => r[1])
     .sort((r1, r2) => r1.score - r2.score);
