@@ -5,7 +5,23 @@ numpy
 scipy
 wheel == 0.43.0
 surprise
-torch == 2.2.1
+#torch == 2.2.1
 ipywidgets
 nltk == 3.8.1
 scikit-learn
+matplotlib
+networkx
+unicodedata
+nltk
+ast
+csv
+os
+random
+re
+string
+time
+requests
+bs4
+pickle
+cloudpickle
+blosc
